@@ -8,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
-
+    private val editText: EditText? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,6 +16,9 @@ class MainActivity : AppCompatActivity() {
         val textView: TextView = findViewById(R.id.textView);
         val editText: EditText = findViewById(R.id.editText);
         val button: Button = findViewById(R.id.button);
+        if (savedInstanceState != null) {
+            textView.text = savedInstanceState.getString("EditText text");
+        }
         setItems(textView, editText, button);
     }
 
@@ -27,5 +30,12 @@ class MainActivity : AppCompatActivity() {
             editText.setText("");
         }
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (editText != null) {
+            outState.putString("EditText text",  editText.text.toString())
+        };
     }
 }
