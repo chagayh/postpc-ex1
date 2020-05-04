@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-//    private lateinit var button: Button
-//    private lateinit var textView: TextView
-//    private lateinit var editText: EditText
+
     private lateinit var adapter: ItemAdapter
     private lateinit var itemsList: MutableList<Item>
 
@@ -19,20 +17,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val reverseLayout = false
-
         createItemsList(savedInstanceState)
         adapter = ItemAdapter()
         adapter.setItems(itemsList)
         items_recycler.adapter = adapter
         items_recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, reverseLayout)
-
+        adapter.itemClickListener = (object : ItemClickListener {
+            override fun onItemClicked(item: Item) {
+                if (!item.isDone) {
+                    val msg = String.format("TODO %s is now DONE. BOOM!", item.text)
+                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+                    item.isDone = true
+                    adapter.setItems(itemsList)
+                }
+            }
+        })
         setComponents()
     }
 
     private fun createItemsList(savedInstanceState: Bundle?) {
         itemsList = mutableListOf<Item>()
         if (savedInstanceState != null) {
-            Toast.makeText(this, "hello", Toast.LENGTH_SHORT).show()
             editText.setText(savedInstanceState.getString("EditText text"))
             val savedItemsList = savedInstanceState.getStringArray("savedItemsList")
             val isDoneArray = savedInstanceState.getBooleanArray("isDoneArray")
@@ -48,11 +53,11 @@ class MainActivity : AppCompatActivity() {
     private fun setComponents() {
         button.setOnClickListener {
             if (editText.text.toString() == "") {
-                Toast.makeText(this, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
             } else {
                 val item = Item(editText.text.toString(), false)
-                adapter.addItem(item)
                 itemsList.add(item)
+                adapter.setItems(itemsList)
                 editText.text.clear()
             }
         }
