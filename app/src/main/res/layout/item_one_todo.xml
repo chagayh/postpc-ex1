@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="80dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <ImageView
         android:id="@+id/check_box_img"
@@ -12,7 +13,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="16dp"
-        android:src="@color/colorPrimary" />
+        android:alpha="@android:integer/config_longAnimTime"
+    />
 
     <TextView
         android:id="@+id/todo_text"
@@ -21,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/check_box"
+        app:layout_constraintStart_toEndOf="@+id/check_box_img"
         android:textSize="24sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

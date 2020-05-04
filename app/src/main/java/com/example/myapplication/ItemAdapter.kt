@@ -13,6 +13,11 @@ class ItemAdapter: RecyclerView.Adapter<ItemHolder>() {
         notifyDataSetChanged()
     }
 
+    fun addItem(item: Item) {
+        _items.add(item)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         val context = parent.context
         val view = LayoutInflater.from(context)
@@ -26,8 +31,14 @@ class ItemAdapter: RecyclerView.Adapter<ItemHolder>() {
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         val item = _items[position]
-        holder.text.setText(item.text)
-        holder.img.setImageResource(TODO("enter the check box image"))
+        holder.text.text = item.text
+        holder.img.setImageResource(R.drawable.check_box_empty_24dp)
+        holder.itemView.setOnClickListener {
+//            Toast.makeText(view, "alpha value = " + holder.img.imageAlpha, Toast.LENGTH_SHORT).show()
+            if (!item.isDone) {     // isDone = false
+                holder.img.setImageResource(R.drawable.ic_check_box_w_v_24dp)
+                item.isDone = true
+            }
+        }
     }
-
 }
