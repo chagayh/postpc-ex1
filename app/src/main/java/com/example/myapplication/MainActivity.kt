@@ -13,6 +13,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val reverseLayout = false
+        val adapter = ItemAdapter()
+
+        adapter.setItems(createItems())
         val textView: TextView = findViewById(R.id.textView);
         val editText: EditText = findViewById(R.id.editText);
         val button: Button = findViewById(R.id.button);

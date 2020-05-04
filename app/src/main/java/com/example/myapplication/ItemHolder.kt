@@ -3,6 +3,7 @@ package com.example.myapplication
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 
 class ItemHolder(view: View): RecyclerView.ViewHolder(view){
     val text: TextView = view.findViewById(R.id.todo_text)
