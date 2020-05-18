@@ -1,8 +1,11 @@
 package com.example.myapplication
 
+import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,6 +15,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: ItemAdapter
     private lateinit var itemsList: ArrayList<Item>
     private lateinit var appContext: TodoApp
+
+    companion object {
+        private const val ADD_KEY = "add"
+        private const val REMOVE_KEY = "remove"
+        private const val COMPLETE_KEY = "complete"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,19 +53,55 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateItems(action : String, item : Item) {
+        when (action) {
+            ADD_KEY -> itemsList.add(item)
+            REMOVE_KEY -> itemsList.remove(item)
+            COMPLETE_KEY -> item.isDone = true
+        }
+        adapter.setItems(itemsList)
+        appContext.todoListManager.setItemsList(itemsList)
+        appContext.todoListManager.storeItemsList()
+    }
+
+
     private fun setComponents() {
         button.setOnClickListener {
             if (editText.text.toString() == "") {
                 Toast.makeText(appContext, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
             } else {
                 val item = Item(editText.text.toString(), false)
-                itemsList.add(item)
-                adapter.setItems(itemsList)
-                appContext.todoListManager.setItemsList(itemsList)
-                appContext.todoListManager.storeItemsList()
+                updateItems(ADD_KEY, item)
                 editText.text.clear()
             }
         }
+
+//        adapter.itemLongClickListener = (object: ItemClickListener {
+//            override fun onItemLongClicked(item: Item) {
+//                val builder = AlertDialog.Builder(this@MainActivity)
+//                Log.e("TAG", "CLICKED long")
+//                with (builder)
+//                {
+//                    setTitle("Delete Alert")
+//                    setMessage("Are You sure to delete?")
+//                    setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
+//                        updateItems(REMOVE_KEY, item)
+//                    }
+//                    setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
+//                    show()
+//                }
+//                    .setTitle("Delete Alert")
+//                    .setMessage("Are You sure to delete?")
+//                    .setPositiveButton("Of curse", object : DialogInterface.OnClickListener {
+//                        override fun onClick(dialog: DialogInterface?, which: Int) {
+//                            itemsList.remove(item)
+//                            adapter.setItems(itemsList)
+//                            appContext.todoListManager.setItemsList(itemsList)
+//                            appContext.todoListManager.storeItemsList()
+//                        }
+//                    })
+//            }
+//        })
 
         adapter.itemClickListener = (object : ItemClickListener {
             override fun onItemClicked(item: Item) {
@@ -67,6 +112,23 @@ class MainActivity : AppCompatActivity() {
                     adapter.setItems(itemsList)
                     appContext.todoListManager.setItemsList(itemsList)
                     appContext.todoListManager.storeItemsList()
+                }
+            }
+        })
+
+        adapter.itemLongClickListener = (object : ItemLongClickListener {
+            override fun onLongItemClicked(item: Item) {
+                val builder = AlertDialog.Builder(this@MainActivity)
+                Log.e("TAG", "CLICKED long")
+                with(builder)
+                {
+                    setTitle("Delete Alert")
+                    setMessage("Are You sure you want to delete?")
+                    setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
+                        updateItems(REMOVE_KEY, item)
+                    }
+                    setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
+                    show()
                 }
             }
         })

@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 class ItemAdapter: RecyclerView.Adapter<ItemHolder>() {
     private val _items: MutableList<Item> = ArrayList()
     var itemClickListener: ItemClickListener? = null
+    var itemLongClickListener: ItemLongClickListener? = null
 
     fun setItems(items: ArrayList<Item>) {
         _items.clear()
@@ -32,6 +33,10 @@ class ItemAdapter: RecyclerView.Adapter<ItemHolder>() {
         holder.img.setImageResource(image)
         holder.itemView.setOnClickListener {
             itemClickListener?.onItemClicked(item)
+        }
+        holder.itemView.setOnLongClickListener {
+            itemLongClickListener?.onLongItemClicked(item)
+            true
         }
     }
 }
