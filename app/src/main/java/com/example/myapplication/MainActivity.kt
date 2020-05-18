@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         appContext = applicationContext as TodoApp  // Application context
-
         val reverseLayout = false
         createItemsList(savedInstanceState)
         adapter = ItemAdapter()
@@ -29,7 +28,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createItemsList(savedInstanceState: Bundle?) {
-        itemsList = ArrayList<Item>()
+        itemsList = appContext.todoListManager.getItemsList()
         if (savedInstanceState != null) {
             editText.setText(savedInstanceState.getString("EditText text"))
             val savedItemsList = savedInstanceState.getStringArray("savedItemsList")

@@ -6,9 +6,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 
-class TodoListManager(val context: Context) {
+class TodoListManager(context: Context) {
     private val appContext: Context = context
-    private var itemsList: MutableList<Item>
+    private var itemsList: ArrayList<Item>
     private val gson: Gson
     private val spForTodoList: SharedPreferences
 
@@ -28,12 +28,16 @@ class TodoListManager(val context: Context) {
         val listAsJason: String? = spForTodoList.getString(KEY_TODO_LIST, null)
         if (listAsJason != null) {
             val listType = object : TypeToken<ArrayList<Item>>(){}.type
-            itemsList = gson.fromJson(listAsJason, listType)    // TODO check if correct
+            itemsList.addAll(gson.fromJson(listAsJason, listType))    // TODO check if correct
         }
     }
 
     fun setItemsList(items: ArrayList<Item>) {
         itemsList = items
+    }
+
+    fun getItemsList() : ArrayList<Item> {
+        return itemsList
     }
 
     fun storeItemsList(){
