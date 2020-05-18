@@ -10,11 +10,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: ItemAdapter
-    private lateinit var itemsList: MutableList<Item>
+    private lateinit var itemsList: ArrayList<Item>
+    private lateinit var appContext: TodoApp
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        appContext = applicationContext as TodoApp  // Application context
 
         val reverseLayout = false
         createItemsList(savedInstanceState)
@@ -22,21 +25,11 @@ class MainActivity : AppCompatActivity() {
         adapter.setItems(itemsList)
         items_recycler.adapter = adapter
         items_recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, reverseLayout)
-        adapter.itemClickListener = (object : ItemClickListener {
-            override fun onItemClicked(item: Item) {
-                if (!item.isDone) {
-                    val msg = String.format("TODO %s is now DONE. BOOM!", item.text)
-                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-                    item.isDone = true
-                    adapter.setItems(itemsList)
-                }
-            }
-        })
         setComponents()
     }
 
     private fun createItemsList(savedInstanceState: Bundle?) {
-        itemsList = mutableListOf<Item>()
+        itemsList = ArrayList<Item>()
         if (savedInstanceState != null) {
             editText.setText(savedInstanceState.getString("EditText text"))
             val savedItemsList = savedInstanceState.getStringArray("savedItemsList")
@@ -47,20 +40,37 @@ class MainActivity : AppCompatActivity() {
                     itemsList.add(item)
                 }
             }
+            appContext.todoListManager.setItemsList(itemsList)
+            appContext.todoListManager.storeItemsList()
         }
     }
 
     private fun setComponents() {
         button.setOnClickListener {
             if (editText.text.toString() == "") {
-                Toast.makeText(applicationContext, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(appContext, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
             } else {
                 val item = Item(editText.text.toString(), false)
                 itemsList.add(item)
                 adapter.setItems(itemsList)
+                appContext.todoListManager.setItemsList(itemsList)
+                appContext.todoListManager.storeItemsList()
                 editText.text.clear()
             }
         }
+
+        adapter.itemClickListener = (object : ItemClickListener {
+            override fun onItemClicked(item: Item) {
+                if (!item.isDone) {
+                    val msg = String.format("TODO %s is now DONE. BOOM!", item.text)
+                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+                    item.isDone = true
+                    adapter.setItems(itemsList)
+                    appContext.todoListManager.setItemsList(itemsList)
+                    appContext.todoListManager.storeItemsList()
+                }
+            }
+        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

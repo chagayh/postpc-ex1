@@ -8,7 +8,7 @@ class ItemAdapter: RecyclerView.Adapter<ItemHolder>() {
     private val _items: MutableList<Item> = ArrayList()
     var itemClickListener: ItemClickListener? = null
 
-    fun setItems(items: List<Item>) {
+    fun setItems(items: ArrayList<Item>) {
         _items.clear()
         _items.addAll(items)
         notifyDataSetChanged()
