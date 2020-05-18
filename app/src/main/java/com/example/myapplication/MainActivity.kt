@@ -119,7 +119,6 @@ class MainActivity : AppCompatActivity() {
         adapter.itemLongClickListener = (object : ItemLongClickListener {
             override fun onLongItemClicked(item: Item) {
                 val builder = AlertDialog.Builder(this@MainActivity)
-                Log.e("TAG", "CLICKED long")
                 with(builder)
                 {
                     setTitle("Delete Alert")

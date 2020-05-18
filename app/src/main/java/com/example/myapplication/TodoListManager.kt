@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -15,6 +16,7 @@ class TodoListManager(context: Context) {
     companion object {
         private const val SP_TODO_LIST_FILE_NAME: String = "sp_todo_list"
         private const val KEY_TODO_LIST: String = "key_todo_list"
+        private const val SIZE_TAG: String = "List Size"
     }
 
     init {
@@ -22,6 +24,7 @@ class TodoListManager(context: Context) {
         gson = Gson()
         itemsList = ArrayList<Item>()
         loadItemsList()
+        Log.d(SIZE_TAG, itemsList.size.toString())
     }
 
     private fun loadItemsList(){
