@@ -76,33 +76,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-//        adapter.itemLongClickListener = (object: ItemClickListener {
-//            override fun onItemLongClicked(item: Item) {
-//                val builder = AlertDialog.Builder(this@MainActivity)
-//                Log.e("TAG", "CLICKED long")
-//                with (builder)
-//                {
-//                    setTitle("Delete Alert")
-//                    setMessage("Are You sure to delete?")
-//                    setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
-//                        updateItems(REMOVE_KEY, item)
-//                    }
-//                    setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
-//                    show()
-//                }
-//                    .setTitle("Delete Alert")
-//                    .setMessage("Are You sure to delete?")
-//                    .setPositiveButton("Of curse", object : DialogInterface.OnClickListener {
-//                        override fun onClick(dialog: DialogInterface?, which: Int) {
-//                            itemsList.remove(item)
-//                            adapter.setItems(itemsList)
-//                            appContext.todoListManager.setItemsList(itemsList)
-//                            appContext.todoListManager.storeItemsList()
-//                        }
-//                    })
-//            }
-//        })
-
         adapter.itemClickListener = (object : ItemClickListener {
             override fun onItemClicked(item: Item) {
                 if (!item.isDone) {
@@ -122,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 with(builder)
                 {
                     setTitle("Delete Alert")
-                    setMessage("Are You sure you want to delete?")
+                    setMessage("Are You sure you want to delete? ")
                     setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
                         updateItems(REMOVE_KEY, item)
                     }
