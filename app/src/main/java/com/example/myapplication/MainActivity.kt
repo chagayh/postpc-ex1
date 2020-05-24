@@ -30,19 +30,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        appContext = applicationContext as TodoApp  // Application context
-        val reverseLayout = false
-        createItemsList(savedInstanceState)
-        adapter = ItemAdapter()
-        adapter.setItems(itemsList)
-        items_recycler.adapter = adapter
-        items_recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, reverseLayout)
-        setComponents()
+        appContext = applicationContext as TodoApp // Application context
+//        val reverseLayout = false
+//        appContext.todoListManagerDB.addItem(Item("test", false, DateTimeFormatter.ISO_INSTANT.format(Instant.now())))
+//        createItemsList(savedInstanceState)
+//        adapter = ItemAdapter()
+//        adapter.setItems(itemsList)
+//        items_recycler.adapter = adapter
+//        items_recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, reverseLayout)
+//        setComponents()
     }
 
     private fun createItemsList(savedInstanceState: Bundle?) {
         itemsList = appContext.todoListManagerDB.getItemsList()
-        editText.setText(savedInstanceState!!.getString("EditText text"))
+        editText.setText(savedInstanceState?.getString("EditText text"))
 //        if (savedInstanceState != null) {
 //            editText.setText(savedInstanceState.getString("EditText text"))
 //            val savedItemsList = savedInstanceState.getStringArray("savedItemsList")
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(appContext, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
             } else {
                 val item = Item(editText.text.toString(), false, DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
-                updateItemsList(ADD_KEY, item)
+                updateItemsList(ADD_KEY, item, false)
                 editText.text.clear()
             }
         }
@@ -92,27 +93,30 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
                     item.isDone = true
                     adapter.setItems(itemsList)
-                    appContext.todoListManager.setItemsList(itemsList)
-                    appContext.todoListManager.storeItemsList()
+//                    appContext.todoListManager.setItemsList(itemsList)
+//                    appContext.todoListManager.storeItemsList()
                 }
+//                else {
+//
+//                }
             }
         })
 
-        adapter.itemLongClickListener = (object : ItemLongClickListener {
-            override fun onLongItemClicked(item: Item) {
-                val builder = AlertDialog.Builder(this@MainActivity)
-                with(builder)
-                {
-                    setTitle("Delete Alert")
-                    setMessage("Are You sure you want to delete? ")
-                    setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
-                        updateItemsList(REMOVE_KEY, item)
-                    }
-                    setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
-                    show()
-                }
-            }
-        })
+//        adapter.itemLongClickListener = (object : ItemLongClickListener {
+//            override fun onLongItemClicked(item: Item) {
+//                val builder = AlertDialog.Builder(this@MainActivity)
+//                with(builder)
+//                {
+//                    setTitle("Delete Alert")
+//                    setMessage("Are You sure you want to delete? ")
+//                    setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
+//                        updateItemsList(REMOVE_KEY, item)
+//                    }
+//                    setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
+//                    show()
+//                }
+//            }
+//        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

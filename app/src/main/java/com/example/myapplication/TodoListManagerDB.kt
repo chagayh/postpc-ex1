@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.content.Context
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
@@ -14,16 +13,17 @@ class TodoListManagerDB () {
     // code will execute when creating an instance of this class
     init {
         createLiveQuery()
-        Log.d(SIZE_TAG, allItems.size.toString())
+//        Log.d(SIZE_TAG, allItems.size.toString())
     }
 
     companion object {
-        private const val ITEM_COLLECTION_PATH: String = "sp_todo_list"
+        private const val ITEM_COLLECTION_PATH: String = "todo_list"
         private const val LOG_TAG: String = "FirestorePetsManager"
         private const val SIZE_TAG: String = "List Size"
     }
 
     fun getItemsList(): ArrayList<Item> {
+        Log.e("ITEM_LIST", "in get item list")
         // return a copy of the local list
         // why copy? bcs we don't want anyone to start adding/removing pets from our private list
         return ArrayList(allItems)
@@ -31,7 +31,7 @@ class TodoListManagerDB () {
 
     fun addItem(item: Item) {
         if (item in allItems) {
-            Log.w("PetsManager", "ignoring, Item already in local arrayList!")
+            Log.w("ItemManager", "ignoring, Item already in local arrayList!")
         }
 
         // add to local list
