@@ -1,14 +1,17 @@
 package com.example.myapplication
 
 import android.content.DialogInterface
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +25,7 @@ class MainActivity : AppCompatActivity() {
         private const val COMPLETE_KEY = "complete"
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,41 +41,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createItemsList(savedInstanceState: Bundle?) {
-        itemsList = appContext.todoListManager.getItemsList()
-        if (savedInstanceState != null) {
-            editText.setText(savedInstanceState.getString("EditText text"))
-            val savedItemsList = savedInstanceState.getStringArray("savedItemsList")
-            val isDoneArray = savedInstanceState.getBooleanArray("isDoneArray")
-            for (i in savedItemsList!!.indices) {
-                if (isDoneArray != null) {
-                    val item = Item(savedItemsList[i], isDoneArray[i])
-                    itemsList.add(item)
-                }
-            }
-            appContext.todoListManager.setItemsList(itemsList)
-            appContext.todoListManager.storeItemsList()
-        }
+        itemsList = appContext.todoListManagerDB.getItemsList()
+        editText.setText(savedInstanceState!!.getString("EditText text"))
+//        if (savedInstanceState != null) {
+//            editText.setText(savedInstanceState.getString("EditText text"))
+//            val savedItemsList = savedInstanceState.getStringArray("savedItemsList")
+//            val isDoneArray = savedInstanceState.getBooleanArray("isDoneArray")
+//            for (i in savedItemsList!!.indices) {
+//                if (isDoneArray != null) {
+//                    val item = Item(savedItemsList[i], isDoneArray[i], )
+//                    itemsList.add(item)
+//                }
+//            }
+//            appContext.todoListManager.setItemsList(itemsList)
+//            appContext.todoListManager.storeItemsList()
+//        }
     }
 
-    private fun updateItems(action : String, item : Item) {
+    private fun markComplete(item: Item, done: Boolean) {
+        val newItem = Item(item.text, done, item.timeStamp, item.lastModified, item.firestoreDocumentId)
+        appContext.todoListManagerDB.editItem(item, newItem)
+    }
+
+    private fun updateItemsList(action : String, item : Item, done: Boolean) {
         when (action) {
-            ADD_KEY -> itemsList.add(item)
-            REMOVE_KEY -> itemsList.remove(item)
-            COMPLETE_KEY -> item.isDone = true
+            ADD_KEY -> appContext.todoListManagerDB.addItem(item)
+            REMOVE_KEY -> appContext.todoListManagerDB.deleteItem(item)
+            COMPLETE_KEY -> markComplete(item, done)
         }
+        itemsList = appContext.todoListManagerDB.getItemsList() // TODO - check how long takes to complete
         adapter.setItems(itemsList)
-        appContext.todoListManager.setItemsList(itemsList)
-        appContext.todoListManager.storeItemsList()
     }
 
-
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setComponents() {
         button.setOnClickListener {
             if (editText.text.toString() == "") {
                 Toast.makeText(appContext, "you can't create an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
             } else {
-                val item = Item(editText.text.toString(), false)
-                updateItems(ADD_KEY, item)
+                val item = Item(editText.text.toString(), false, DateTimeFormatter.ISO_INSTANT.format(Instant.now()))
+                updateItemsList(ADD_KEY, item)
                 editText.text.clear()
             }
         }
@@ -97,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                     setTitle("Delete Alert")
                     setMessage("Are You sure you want to delete? ")
                     setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
-                        updateItems(REMOVE_KEY, item)
+                        updateItemsList(REMOVE_KEY, item)
                     }
                     setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
                     show()

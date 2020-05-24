@@ -31,7 +31,7 @@ class TodoListManager(context: Context) {
         val listAsJason: String? = spForTodoList.getString(KEY_TODO_LIST, null)
         if (listAsJason != null) {
             val listType = object : TypeToken<ArrayList<Item>>(){}.type
-            itemsList.addAll(gson.fromJson(listAsJason, listType))    // TODO check if correct
+            itemsList.addAll(gson.fromJson(listAsJason, listType))
         }
     }
 
