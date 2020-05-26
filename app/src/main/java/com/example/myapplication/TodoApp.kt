@@ -7,6 +7,6 @@ class TodoApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        todoListManagerDB = TodoListManagerDB()
+        todoListManagerDB = TodoListManagerDB(this)
     }
 }

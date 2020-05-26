@@ -1,11 +1,14 @@
 package com.example.myapplication
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
 
-class TodoListManagerDB () {
+class TodoListManagerDB (private val context : Context) {
     // another way to do it was letting class Pet have an "id" field and use a HashMap like in the previous example
     private val allItems = ArrayList<Item>()
 
@@ -13,13 +16,13 @@ class TodoListManagerDB () {
     // code will execute when creating an instance of this class
     init {
         createLiveQuery()
-//        Log.d(SIZE_TAG, allItems.size.toString())
+        Log.d(SIZE_TAG, allItems.size.toString())
     }
 
     companion object {
         private const val ITEM_COLLECTION_PATH: String = "todo_list"
-        private const val LOG_TAG: String = "FirestorePetsManager"
-        private const val SIZE_TAG: String = "List Size"
+        private const val LOG_TAG: String = "FirestoreItemManager"
+        private const val SIZE_TAG: String = "List_Size"
     }
 
     fun getItemsList(): ArrayList<Item> {
@@ -27,6 +30,21 @@ class TodoListManagerDB () {
         // return a copy of the local list
         // why copy? bcs we don't want anyone to start adding/removing pets from our private list
         return ArrayList(allItems)
+    }
+
+    fun setIsDone(item: Item, done: Boolean) {
+        val firestore = FirebaseFirestore.getInstance()
+        val documentId = item.firestoreDocumentId
+        if (documentId == null) {
+            // we don't know where to look! so can't update the document from firestore
+            Log.e(LOG_TAG, "can't update item in firestore, no document-id!$item")
+            return
+        }
+        val document = firestore.collection(ITEM_COLLECTION_PATH).document(documentId)
+        document
+            .update("done", done)
+            .addOnSuccessListener { Log.d(LOG_TAG, "DocumentSnapshot successfully updated!") }
+            .addOnFailureListener { e -> Log.w(LOG_TAG, "Error updating document", e) }
     }
 
     fun addItem(item: Item) {
@@ -55,6 +73,8 @@ class TodoListManagerDB () {
     fun editItem(oldItem: Item, newItem: Item) {
         /// update in local list
         val index: Int = allItems.indexOf(oldItem)
+        Log.e("EDIT_ITEM", "${newItem.done}")
+        Log.e("EDIT_ITEM", "${oldItem.done}")
         if (index == -1) {
             Log.e(LOG_TAG, "can't edit item: could not find old pet!")
             return
@@ -71,7 +91,7 @@ class TodoListManagerDB () {
             return
         }
 
-        newItem.firestoreDocumentId = documentId // preserve it as we're about to override oldPet in firestore
+        newItem.firestoreDocumentId = documentId // preserve it as we're about to override oldItem in firestore
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection(ITEM_COLLECTION_PATH).document(documentId).set(newItem)
     }
@@ -106,6 +126,7 @@ class TodoListManagerDB () {
     // every time the collection "pets" is changed
     // (e.g. when a document in this collection gets created, deleted, or getting its data changed)
     private fun createLiveQuery(){
+
         val firestore = FirebaseFirestore.getInstance()
 
         val referenceToCollection = firestore.collection(ITEM_COLLECTION_PATH)
@@ -115,7 +136,6 @@ class TodoListManagerDB () {
         // we could have written this:
         // {val referenceToCollection = firestore.collection("pets").whereEqualTo("animalType", "dog")}
         // but we want to get all the documents in this collection without any constraint
-
 
 
         // the code in ".addSnapshotListener {}" will execute in the future, first time when firestore
@@ -134,12 +154,19 @@ class TodoListManagerDB () {
                 return@addSnapshotListener
             }
 
+            Log.e(LOG_TAG, "reached here? we got data! yay :)")
             // reached here? we got data! yay :)
             // let's refresh the local arrayList
             this.allItems.clear()
             for (document: QueryDocumentSnapshot in value) {
                 val item = document.toObject(Item::class.java) // convert to item
                 this.allItems.add(item)
+            }
+        }
+        referenceToCollection.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val intent = Intent("hello")
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
             }
         }
 

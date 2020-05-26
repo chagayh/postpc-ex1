@@ -29,7 +29,7 @@ class ItemAdapter: RecyclerView.Adapter<ItemHolder>() {
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         val item = _items[position]
         holder.text.text = item.text
-        val image = if (item.isDone) R.drawable.check_box_w_v_24dp else R.drawable.check_box_empty_24dp
+        val image = if (item.done) R.drawable.check_box_w_v_24dp else R.drawable.check_box_empty_24dp
         holder.img.setImageResource(image)
         holder.itemView.setOnClickListener {
             itemClickListener?.onItemClicked(item)
