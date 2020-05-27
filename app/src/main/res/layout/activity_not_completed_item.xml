@@ -4,35 +4,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CompletedItemActivity">
+    tools:context=".NotCompletedItemActivity">
 
-    <TextView
+    <EditText
         android:id="@+id/itemContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@id/itemModified"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/itemModified"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/applyBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemContent" />
 
     <Button
         android:id="@+id/applyBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="200sp"
-        android:text="Delete Task"
+        android:text="Apply"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/doneBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/itemContent" />
+        app:layout_constraintTop_toBottomOf="@id/itemModified" />
 
     <Button
         android:id="@+id/doneBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="UnDone"
+        android:text="Done"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

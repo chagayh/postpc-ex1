@@ -11,24 +11,27 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import kotlinx.android.synthetic.main.activity_main.*
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
-class CompletedItemActivity : AppCompatActivity() {
+class NotCompletedItemActivity : AppCompatActivity() {
 
     private val appContext: TodoApp
         get() = applicationContext as TodoApp
-    private val itemContent: TextView
+    private val itemContent: EditText
         get() = findViewById(R.id.itemContent)
-    private val deleteBtn: Button
+    private val itemModified: TextView
+        get() = findViewById(R.id.itemModified)
+    private val applyBtn: Button
         get() = findViewById(R.id.applyBtn)
-    private val unDoneBtn: Button
+    private val doneBtn: Button
         get() = findViewById(R.id.doneBtn)
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_completed_item)
+        setContentView(R.layout.activity_not_completed_item)
         setComponents(savedInstanceState)
     }
 
@@ -45,34 +48,30 @@ class CompletedItemActivity : AppCompatActivity() {
             Log.e("ITEM_EXIST", "item id doesn't exist")
             return
         }
-        itemContent.text = item.text
+        itemContent.setText(item.text)
+        val itemInfo = "TODO was created on ${item.timeStamp}\nitem was last modified on ${item.lastModified}"
+        itemModified.text = itemInfo
 
-        unDoneBtn.setOnClickListener {
-            val newItem = Item(item!!.text, false, item!!.timeStamp,
+        doneBtn.setOnClickListener {
+            val newItem = Item(
+                item!!.text, true, item!!.timeStamp,
                 DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
             appContext.todoListManagerDB.editItem(item!!, newItem)
+            Toast.makeText(applicationContext, "Congrats TODO ${item!!.text} is now DONE", Toast.LENGTH_SHORT).show()
             finish()
         }
 
-        deleteBtn.setOnClickListener {
-            val builder = AlertDialog.Builder(this@CompletedItemActivity)
-            with(builder)
-            {
-                setTitle("Delete Alert")
-                setMessage("Are You sure you want to delete? ")
-                setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
-                    appContext.todoListManagerDB.deleteItem(item!!)
-                    Toast.makeText(applicationContext, "Deleted TODO ${item!!.text}", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                setNegativeButton("No Way") { _: DialogInterface, _: Int ->
-                    val newItem = Item(item!!.text, item!!.done, item!!.timeStamp,
-                        DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
-                    appContext.todoListManagerDB.editItem(item!!, newItem)
-                    item = newItem
-                }
-                show()
+        applyBtn.setOnClickListener {
+            if (itemContent.text.toString() == "") {
+                Toast.makeText(appContext, "you can't change to an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
+            } else {
+                val newItem = Item(itemContent.text.toString(), item!!.done, item!!.timeStamp,
+                    DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
+                appContext.todoListManagerDB.editItem(item!!, newItem)
+                Toast.makeText(applicationContext, "changed TODO ${item!!.text} to ${itemContent.text}", Toast.LENGTH_SHORT).show()
+                item = newItem
             }
         }
     }
 }
+

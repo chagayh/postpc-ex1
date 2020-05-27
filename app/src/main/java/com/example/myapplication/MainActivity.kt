@@ -85,9 +85,9 @@ class MainActivity : AppCompatActivity() {
         adapter.itemClickListener = (object : ItemClickListener {
             override fun onItemClicked(item: Item) {
                 if (!item.done) {
-                    val msg = String.format("TODO %s is now DONE. BOOM!", item.text)
-                    Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-                    updateItemsList(DONE_KEY, item, true)
+                    val intent = Intent(this@MainActivity, NotCompletedItemActivity::class.java)
+                    intent.putExtra("item_id", item.firestoreDocumentId)
+                    startActivity(intent)
                 }
                 else {
                     val intent = Intent(this@MainActivity, CompletedItemActivity::class.java)
@@ -96,22 +96,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-
-//        adapter.itemLongClickListener = (object : ItemLongClickListener {
-//            override fun onLongItemClicked(item: Item) {
-//                val builder = AlertDialog.Builder(this@MainActivity)
-//                with(builder)
-//                {
-//                    setTitle("Delete Alert")
-//                    setMessage("Are You sure you want to delete? ")
-//                    setPositiveButton("Of curse") { _: DialogInterface, _: Int ->
-//                        updateItemsList(REMOVE_KEY, item)
-//                    }
-//                    setNegativeButton("No Way") { _: DialogInterface, _: Int -> }
-//                    show()
-//                }
-//            }
-//        })
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
