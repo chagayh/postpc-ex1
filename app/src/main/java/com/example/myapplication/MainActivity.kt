@@ -54,13 +54,17 @@ class MainActivity : AppCompatActivity() {
         adapter.setItems(appContext.todoListManagerDB.getItemsList())
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateItemsList(action : String, item : Item, isDone: Boolean) {
         when (action) {
             ADD_KEY -> appContext.todoListManagerDB.addItem(item)
             REMOVE_KEY -> appContext.todoListManagerDB.deleteItem(item)
             DONE_KEY -> {
-                item.done = isDone
-                appContext.todoListManagerDB.editItem(item, item)
+                val date = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+                val newItem = Item(item.text, true, date, date, item.firestoreDocumentId)
+                newItem.done = isDone
+                appContext.todoListManagerDB.editItem(item, newItem)
+                Toast.makeText(applicationContext, item.done.toString(), Toast.LENGTH_SHORT).show()
             }
         }
         adapter.setItems(appContext.todoListManagerDB.getItemsList())
@@ -82,8 +86,8 @@ class MainActivity : AppCompatActivity() {
             override fun onItemClicked(item: Item) {
                 if (!item.done) {
                     val msg = String.format("TODO %s is now DONE. BOOM!", item.text)
-                    updateItemsList(DONE_KEY, item, true)
                     Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+                    updateItemsList(DONE_KEY, item, true)
                 }
 //                else {
 //

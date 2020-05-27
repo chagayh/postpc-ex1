@@ -26,25 +26,9 @@ class TodoListManagerDB (private val context : Context) {
     }
 
     fun getItemsList(): ArrayList<Item> {
-        Log.e("ITEM_LIST", "in get item list")
         // return a copy of the local list
         // why copy? bcs we don't want anyone to start adding/removing pets from our private list
         return ArrayList(allItems)
-    }
-
-    fun setIsDone(item: Item, done: Boolean) {
-        val firestore = FirebaseFirestore.getInstance()
-        val documentId = item.firestoreDocumentId
-        if (documentId == null) {
-            // we don't know where to look! so can't update the document from firestore
-            Log.e(LOG_TAG, "can't update item in firestore, no document-id!$item")
-            return
-        }
-        val document = firestore.collection(ITEM_COLLECTION_PATH).document(documentId)
-        document
-            .update("done", done)
-            .addOnSuccessListener { Log.d(LOG_TAG, "DocumentSnapshot successfully updated!") }
-            .addOnFailureListener { e -> Log.w(LOG_TAG, "Error updating document", e) }
     }
 
     fun addItem(item: Item) {
@@ -73,16 +57,13 @@ class TodoListManagerDB (private val context : Context) {
     fun editItem(oldItem: Item, newItem: Item) {
         /// update in local list
         val index: Int = allItems.indexOf(oldItem)
-        Log.e("EDIT_ITEM", "${newItem.done}")
-        Log.e("EDIT_ITEM", "${oldItem.done}")
         if (index == -1) {
-            Log.e(LOG_TAG, "can't edit item: could not find old pet!")
+            Log.e(LOG_TAG, "can't edit item: could not find old item!")
             return
         }
 
         allItems.remove(oldItem)
         allItems.add(index, newItem)
-
         // update in firebase
         val documentId = oldItem.firestoreDocumentId
         if (documentId == null) {
