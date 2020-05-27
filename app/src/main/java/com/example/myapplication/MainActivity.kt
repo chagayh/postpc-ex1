@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
                 val item = Item(editText.text.toString(), false, timeStamp)
                 appContext.todoListManagerDB.addItem(item)
                 editText.text.clear()
+                adapter.setItems(appContext.todoListManagerDB.getItemsList())
             }
         }
 
