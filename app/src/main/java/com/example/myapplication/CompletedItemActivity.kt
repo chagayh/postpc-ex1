@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class CompletedItemActivity : AppCompatActivity() {
@@ -48,9 +50,7 @@ class CompletedItemActivity : AppCompatActivity() {
         itemContent.text = item.text
 
         unDoneBtn.setOnClickListener {
-            val newItem = Item(item!!.text, false, item!!.timeStamp,
-                DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
-            appContext.todoListManagerDB.editItem(item!!, newItem)
+            updateItem(item!!, item!!.text, false)
             finish()
         }
 
@@ -66,13 +66,18 @@ class CompletedItemActivity : AppCompatActivity() {
                     finish()
                 }
                 setNegativeButton("No Way") { _: DialogInterface, _: Int ->
-                    val newItem = Item(item!!.text, item!!.done, item!!.timeStamp,
-                        DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
-                    appContext.todoListManagerDB.editItem(item!!, newItem)
-                    item = newItem
+                    item = updateItem(item!!, item!!.text, item!!.done)
                 }
                 show()
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateItem(oldItem: Item, text: String, done: Boolean) : Item {
+        val timeStamp = "Date = ${LocalDate.now()}\nTime = ${LocalTime.now()}"
+        val newItem = Item(text, done, oldItem.timeStamp, timeStamp, oldItem.firestoreDocumentId)
+        appContext.todoListManagerDB.editItem(oldItem, newItem)
+        return newItem
     }
 }

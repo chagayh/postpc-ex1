@@ -13,6 +13,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class NotCompletedItemActivity : AppCompatActivity() {
@@ -49,14 +51,11 @@ class NotCompletedItemActivity : AppCompatActivity() {
             return
         }
         itemContent.setText(item.text)
-        val itemInfo = "TODO was created on ${item.timeStamp}\nitem was last modified on ${item.lastModified}"
+        val itemInfo = "TODO was created on -\n${item.timeStamp}\n\n\nitem was last modified on -\n${item.lastModified}"
         itemModified.text = itemInfo
 
         doneBtn.setOnClickListener {
-            val newItem = Item(
-                item!!.text, true, item!!.timeStamp,
-                DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
-            appContext.todoListManagerDB.editItem(item!!, newItem)
+            updateItem(item!!, item!!.text, true)
             Toast.makeText(applicationContext, "Congrats TODO ${item!!.text} is now DONE", Toast.LENGTH_SHORT).show()
             finish()
         }
@@ -64,14 +63,21 @@ class NotCompletedItemActivity : AppCompatActivity() {
         applyBtn.setOnClickListener {
             if (itemContent.text.toString() == "") {
                 Toast.makeText(appContext, "you can't change to an empty TODO item, oh silly!", Toast.LENGTH_SHORT).show()
+                item = updateItem(item!!, item!!.text, item!!.done)
             } else {
-                val newItem = Item(itemContent.text.toString(), item!!.done, item!!.timeStamp,
-                    DateTimeFormatter.ISO_INSTANT.format(Instant.now()), item!!.firestoreDocumentId)
-                appContext.todoListManagerDB.editItem(item!!, newItem)
-                Toast.makeText(applicationContext, "changed TODO ${item!!.text} to ${itemContent.text}", Toast.LENGTH_SHORT).show()
-                item = newItem
+                val oldText = item!!.text
+                item = updateItem(item!!, itemContent.text.toString(), item!!.done)
+                Toast.makeText(applicationContext, "changed TODO $oldText to ${itemContent.text}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateItem(oldItem: Item, text: String, done: Boolean) : Item {
+        val timeStamp = "Date = ${LocalDate.now()}\nTime = ${LocalTime.now()}"
+        val newItem = Item(text, done, oldItem.timeStamp, timeStamp, oldItem.firestoreDocumentId)
+        appContext.todoListManagerDB.editItem(oldItem, newItem)
+        return newItem
     }
 }
 
