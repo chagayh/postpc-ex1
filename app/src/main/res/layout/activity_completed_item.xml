@@ -4,49 +4,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SingleItemActivity">
+    tools:context=".CompletedItemActivity">
 
     <EditText
-        android:id="@+id/todoContent"
+        android:id="@+id/itemContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@id/todoInfo"
+        app:layout_constraintBottom_toTopOf="@id/itemModified"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/todoInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/todoContent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/applyChangesBtn" />
-
     <Button
-        android:id="@+id/applyChangesBtn"
+        android:id="@+id/deleteBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="200sp"
-        android:text="Apply"
+        android:text="Delete Task"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/doneBtn"
+        app:layout_constraintBottom_toTopOf="@id/unDoneBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/todoInfo" />
+        app:layout_constraintTop_toBottomOf="@id/itemContent" />
 
     <Button
-        android:id="@+id/doneBtn"
+        android:id="@+id/unDoneBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:text="UnDone"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/applyChangesBtn" />
+        app:layout_constraintTop_toBottomOf="@id/deleteBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

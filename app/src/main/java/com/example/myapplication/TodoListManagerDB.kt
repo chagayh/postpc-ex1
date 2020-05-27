@@ -31,6 +31,12 @@ class TodoListManagerDB (private val context : Context) {
         return ArrayList(allItems)
     }
 
+    fun getItemById(itemId: String): Item? {
+        return allItems.find {
+            it.firestoreDocumentId == itemId
+        }
+    }
+
     fun addItem(item: Item) {
         if (item in allItems) {
             Log.w("ItemManager", "ignoring, Item already in local arrayList!")

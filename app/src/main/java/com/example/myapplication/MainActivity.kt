@@ -89,9 +89,11 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
                     updateItemsList(DONE_KEY, item, true)
                 }
-//                else {
-//
-//                }
+                else {
+                    val intent = Intent(this@MainActivity, CompletedItemActivity::class.java)
+                    intent.putExtra("item_id", item.firestoreDocumentId)
+                    startActivity(intent)
+                }
             }
         })
 
